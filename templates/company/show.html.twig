@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ companyName }} - Cég áttekintés{% endblock %}
+
+{% block body %}
+    <div class="mb-4">
+        <h1 class="h2 mb-1">{{ companyName }}</h1>
+        <p class="text-muted mb-0">Az utolsó vélemények és trendek.</p>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-3 p-3">
+                <h5 class="mb-3">Értékelés időben</h5>
+                <canvas id="ratingChart" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-3 p-3">
+                <h5 class="mb-3">Vélemények száma naponta</h5>
+                <canvas id="countChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Top 3 vélemény</h5>
+                    {% for r in topReviews %}
+                        <div class="mb-2">
+                            <div><strong>{{ r.companyName }}</strong> — <small class="text-muted">{{ r.createdAt|date('Y-m-d H:i') }}</small></div>
+                            <div class="text-warning">{% for i in 1..5 %}{{ i <= r.rating ? '★' : '☆' }}{% endfor %}</div>
+                            <p class="mb-1">{{ r.reviewText }}</p>
+                            <hr>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Nincsenek vélemények.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Leggyengébb 3 vélemény</h5>
+                    {% for r in worstReviews %}
+                        <div class="mb-2">
+                            <div><strong>{{ r.companyName }}</strong> — <small class="text-muted">{{ r.createdAt|date('Y-m-d H:i') }}</small></div>
+                            <div class="text-warning">{% for i in 1..5 %}{{ i <= r.rating ? '★' : '☆' }}{% endfor %}</div>
+                            <p class="mb-1">{{ r.reviewText }}</p>
+                            <hr>
+                        </div>
+                    {% else %}
+                        <p class="text-muted">Nincsenek vélemények.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    <script>
+        const labels = {{ chartLabels|json_encode|raw }};
+        const ratings = {{ chartRatings|json_encode|raw }};
+
+        const ctx = document.getElementById('ratingChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Értékelés',
+                    data: ratings,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.2,
+                    pointRadius: 3,
+                    fill: true,
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, suggestedMax: 5 }
+                }
+            }
+        });
+
+        const countLabels = {{ countLabels|json_encode|raw }};
+        const countData = {{ countData|json_encode|raw }};
+        const ctx2 = document.getElementById('countChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: countLabels,
+                datasets: [{
+                    label: 'Vélemények száma',
+                    data: countData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            },
+            options: { scales: { y: { beginAtZero: true, precision: 0 } } }
+        });
+    </script>
+{% endblock %}

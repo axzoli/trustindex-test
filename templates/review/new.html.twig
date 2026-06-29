@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Új vélemény{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h1 class="h3 mb-4">Új vélemény beküldése</h1>
+
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.companyName) }}
+                            {{ form_widget(form.companyName) }}
+                            {{ form_errors(form.companyName) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.rating) }}
+                            {{ form_widget(form.rating) }}
+                            <div class="form-text">Adj meg egy értéket 1 és 5 között.</div>
+                            {{ form_errors(form.rating) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.reviewText) }}
+                            {{ form_widget(form.reviewText) }}
+                            {{ form_errors(form.reviewText) }}
+                        </div>
+
+                        <div class="mb-4">
+                            {{ form_label(form.authorEmail) }}
+                            {{ form_widget(form.authorEmail) }}
+                            {{ form_errors(form.authorEmail) }}
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            {{ form_widget(form.submit) }}
+
+                            <a href="{{ path('review_index') }}" class="btn btn-outline-secondary">
+                                Mégsem
+                            </a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

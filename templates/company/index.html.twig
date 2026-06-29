@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cégstatisztikák{% endblock %}
+
+{% block body %}
+    <div class="mb-4">
+        <h1 class="h2 mb-1">Cégstatisztikák</h1>
+        <p class="text-muted mb-0">
+            Cégenkénti véleményszám és átlagos értékelés.
+        </p>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>Cég</th>
+                        <th>Vélemények száma</th>
+                        <th>Átlagos értékelés</th>
+                        <th>Minősítés</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for company in companies %}
+                        <tr style="cursor: pointer;" onclick="window.location.href='{{ path('company_show', {'companyName': company.companyName}) }}'">
+                            <td>
+                                <strong>{{ company.companyName }}</strong>
+                            </td>
+                            <td>
+                                {{ company.reviewCount }}
+                            </td>
+                            <td>
+                                <span class="text-warning">
+                                    {% set roundedRating = company.averageRating|round(0, 'floor') %}
+                                    {% for i in 1..5 %}
+                                        {{ i <= roundedRating ? '★' : '☆' }}
+                                    {% endfor %}
+                                </span>
+                                <span class="text-muted">
+                                    {{ company.averageRating|number_format(2) }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if company.averageRating >= 4.5 %}
+                                    <span class="badge bg-success">Kiemelkedő</span>
+                                {% elseif company.averageRating >= 3.5 %}
+                                    <span class="badge bg-primary">Jó</span>
+                                {% elseif company.averageRating >= 2.5 %}
+                                    <span class="badge bg-warning text-dark">Átlagos</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Fejlesztendő</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">
+                                Nincs statisztikai adat.
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

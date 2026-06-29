@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vélemény részletei{% endblock %}
+
+{% block body %}
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between gap-3 mb-3">
+                <div>
+                    <h1 class="h3 mb-2">
+                        <a href="{{ path('company_show', {'companyName': review.companyName}) }}">{{ review.companyName }}</a>
+                    </h1>
+
+                    <div class="text-warning fs-4" aria-label="{{ review.rating }} / 5 értékelés">
+                        {% for i in 1..5 %}
+                            {{ i <= review.rating ? '★' : '☆' }}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <small class="text-muted text-nowrap">
+                    {{ review.createdAt|date('Y.m.d H:i') }}
+                </small>
+            </div>
+
+            <p class="lead">
+                {{ review.reviewText }}
+            </p>
+
+            <hr>
+
+            <p class="mb-1">
+                <strong>Szerző email:</strong>
+                {{ review.authorEmail }}
+            </p>
+
+            <p class="text-muted">
+                Utoljára frissítve:
+                {{ review.updatedAt|date('Y.m.d H:i') }}
+            </p>
+
+            <a href="{{ path('review_index') }}" class="btn btn-outline-secondary">
+                Vissza a listához
+            </a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Vélemények{% endblock %}
+
+{% block body %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-1">Vélemények</h1>
+            <p class="text-muted mb-0">
+                Felhasználói értékelések cégekről.
+            </p>
+        </div>
+
+        <a href="{{ path('review_new') }}" class="btn btn-primary">
+            Új vélemény
+        </a>
+    </div>
+
+    <form method="get" action="{{ path('review_index') }}" class="mb-4">
+        <div class="input-group">
+            <input
+                type="text"
+                name="q"
+                value="{{ search }}"
+                class="form-control"
+                placeholder="Keresés cégnév alapján"
+            >
+            <button class="btn btn-outline-secondary" type="submit">
+                Keresés
+            </button>
+
+            {% if search %}
+                <a href="{{ path('review_index') }}" class="btn btn-outline-danger">
+                    Törlés
+                </a>
+            {% endif %}
+        </div>
+    </form>
+
+    {% for review in reviews %}
+        <article class="card shadow-sm mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between gap-3">
+                    <div>
+                        <h2 class="h5 mb-1">
+                            <a href="{{ path('company_show', {'companyName': review.companyName}) }}">{{ review.companyName }}</a>
+                        </h2>
+
+                        <div class="text-warning mb-2" aria-label="{{ review.rating }} / 5 értékelés">
+                            {% for i in 1..5 %}
+                                {{ i <= review.rating ? '★' : '☆' }}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <small class="text-muted text-nowrap">
+                        {{ review.createdAt|date('Y.m.d H:i') }}
+                    </small>
+                </div>
+
+                <p class="mb-2">
+                    {{ review.reviewText|length > 180
+                        ? review.reviewText|slice(0, 180) ~ '…'
+                        : review.reviewText
+                    }}
+                </p>
+
+                <a href="{{ path('review_show', { id: review.id }) }}" class="btn btn-sm btn-outline-primary">
+                    Részletek
+                </a>
+            </div>
+        </article>
+    {% else %}
+        <div class="alert alert-info">
+            Nincs megjeleníthető vélemény.
+        </div>
+    {% endfor %}
+{% endblock %}
